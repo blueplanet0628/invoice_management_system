@@ -16,11 +16,20 @@ const RegistrationForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value, type } = e.target;
+
+    if (type === "checkbox") {
+      const checkbox = e.target as HTMLInputElement;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checkbox.checked,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -99,9 +108,7 @@ const RegistrationForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium">
-              建物・部屋番号
-            </label>
+            <label className="block text-sm font-medium">建物・部屋番号</label>
             <input
               name="building"
               value={formData.building}
@@ -117,9 +124,9 @@ const RegistrationForm: React.FC = () => {
             </label>
             <input
               name="email"
+              type="email"
               value={formData.email}
               onChange={handleChange}
-              type="email"
               placeholder="メールアドレスを入力"
               className="w-full border border-gray-300 p-2 rounded"
               required
@@ -182,10 +189,12 @@ const RegistrationForm: React.FC = () => {
         </button>
       </div>
 
-      <a href="/auth/signin" className="block mt-4 text-center text-sm text-gray-600 hover:underline">
+      <a
+        href="/auth/signin"
+        className="block mt-4 text-center text-sm text-gray-600 hover:underline"
+      >
         すでに会員登録されている方はこちら
       </a>
-
     </form>
   );
 };
