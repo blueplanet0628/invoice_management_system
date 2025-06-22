@@ -1,10 +1,13 @@
-'use client'; // This directive makes the component a client component
+'use client';
+import LoginForm from "./LoginForm";
+
+ // This directive makes the component a client component
 
 export default function SignInPage() {
 
     return (
        <div>
-          signin
+          <LoginForm />
        </div>
     );
 }
