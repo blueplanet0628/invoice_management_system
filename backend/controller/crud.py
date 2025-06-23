@@ -20,7 +20,7 @@ def update_todo(db: Session, todo_id: int, todo_data: TodoUpdate):
     if todo:
         todo.title = todo_data.title
         todo.description = todo_data.description
-        todo.completed = todo_data.completed
+        # todo.completed = todo_data.completed
         db.commit()
         db.refresh(todo)
     return todo

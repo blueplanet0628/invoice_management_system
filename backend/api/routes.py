@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from controller import crud
+from controller import crud, usercontroller
 from schema import schemas
-from database.database import get_db  # 後述のget_db関数をここに移す想定
+from database.database import get_db  
 
 router = APIRouter()
 
@@ -34,3 +34,11 @@ def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Todo not found")
     return {"message": "Deleted"}
+
+@router.post("/users", response_model=schemas.UserResponse)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    return usercontroller.create_user(db, user)
+
+@router.post("/login", response_model=schemas.LgoinResponse)
+def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    return usercontroller.login_user_logic(user, db)

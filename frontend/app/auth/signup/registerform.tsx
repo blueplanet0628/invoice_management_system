@@ -1,6 +1,12 @@
+'use client';
+
 import React, { useState } from "react";
+import axios from "axios";
+import {useRouter} from "next/navigation";
 
 const RegistrationForm: React.FC = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     representative: "",
     company: "",
@@ -10,8 +16,11 @@ const RegistrationForm: React.FC = () => {
     building: "",
     email: "",
     phone: "",
+    password: "",
+    repassword: "",
     agree: false,
   });
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -34,11 +43,37 @@ const RegistrationForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.agree) {
-      alert("プライバシーポリシーへの同意が必要です。");
-      return;
+    if(formData.password != formData.repassword) {
+      alert("パスワードを確認してください")
+    } else{
+      if (!formData.agree) {
+        alert("プライバシーポリシーへの同意が必要です。");
+        return;
+      } else {
+        const res = axios.post('http://localhost:9000/users', formData)
+        .then((res) => {
+          console.log(res.data);
+          setFormData({
+            representative: "",
+            company: "",
+            department: "",
+            postalCode: "",
+            address: "",
+            building: "",
+            email: "",
+            phone: "",
+            password: "",
+            repassword: "",
+            agree: false,
+          });
+          router.push('/auth/signup-success');
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+        
+      }
     }
-    console.log(formData);
     // Submit logic here
   };
 
@@ -149,9 +184,9 @@ const RegistrationForm: React.FC = () => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-4">
+        <div className="flex flex-col space-y-4">
           <div>
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-gray-700">
               部署名 <span className="text-red-500">必須</span>
             </label>
             <input
@@ -163,7 +198,38 @@ const RegistrationForm: React.FC = () => {
               required
             />
           </div>
-        </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              パスワード <span className="text-red-500">必須</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="パスワードを入力"
+              className="w-full border border-gray-300 p-2 rounded"
+              required
+            />
+          </div>
+
+        <div>
+    <label className="block text-sm font-medium text-gray-700">
+      パスワードを認証 <span className="text-red-500">必須</span>
+    </label>
+    <input
+      type="password"
+      name="repassword"
+      value={formData.repassword}
+      onChange={handleChange}
+      placeholder="パスワードを認証を入力"
+      className="w-full border border-gray-300 p-2 rounded"
+      required
+    />
+  </div>
+</div>
+
       </div>
 
       {/* Agreement + Submit */}

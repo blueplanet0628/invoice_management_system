@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+"use client";
+import React, { useReducer, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const LoginForm: React.FC = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,8 +20,26 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", formData);
-    // Add your login logic here
+    axios.post(
+      'http://192.168.131.55:9000/login/',
+      {
+        email: formData.email,
+        password: formData.password,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then((res) => {
+      console.log(res);
+      router.push('/dashboard')
+      
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   return (
