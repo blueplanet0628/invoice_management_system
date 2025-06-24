@@ -8,7 +8,7 @@ from utils.security import hash_password, verify_password
 from fastapi import Depends
 from database.database import get_db 
 
-
+reset_tokens = {}
 
 def create_user(db: Session, user: UserCreate):
 
@@ -59,3 +59,7 @@ def login_user_logic(user: UserLogin, db: Session):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     return db_user
+
+
+def read_users(db: Session):
+    return db.query(User).all()

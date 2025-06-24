@@ -21,6 +21,8 @@ class User(Base):
     email = Column(String(100), unique=True, index=True)
     phone = Column(String(20))
     password = Column(String(100))  # ハッシュ化されたパスワードを保存することを想定
+    reset_token = Column(String(255), nullable=True)
+
     created_at = Column(Integer)
     updated_at = Column(Integer)  
-    deleted_at = Column(Integer, nullable=True)  # 削除日時（論理削除用）
+

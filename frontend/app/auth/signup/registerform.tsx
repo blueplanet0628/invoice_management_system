@@ -52,6 +52,7 @@ const RegistrationForm: React.FC = () => {
       } else {
         const res = axios.post('http://localhost:9000/users', formData)
         .then((res) => {
+          router.push('/auth/signup-success');
           console.log(res.data);
           setFormData({
             representative: "",
@@ -66,7 +67,6 @@ const RegistrationForm: React.FC = () => {
             repassword: "",
             agree: false,
           });
-          router.push('/auth/signup-success');
         })
         .catch((err) => {
           console.error(err);

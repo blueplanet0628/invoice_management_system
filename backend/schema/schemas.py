@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class TodoCreate(BaseModel):
@@ -63,8 +63,17 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-class LgoinResponse(BaseModel):
+class LoginResponse(BaseModel):
     id: int
     email: str
     class Config:
         orm_mode = True
+
+class PasswordResetRequest(BaseModel):
+    email: str
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str
+
+

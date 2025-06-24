@@ -1,8 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from controller import crud, usercontroller
+# from controller.usercontroller import request_password_reset, confirm_password_reset
 from schema import schemas
 from database.database import get_db  
+# from schema.schemas import PasswordResetRequest, PasswordResetConfirm
+
+
+from schema.schemas import PasswordResetRequest, PasswordResetConfirm
+from utils.utils import create_reset_token, verify_reset_token
+from utils.email_utils import send_reset_email
+from models.models import User
+from passlib.hash import bcrypt
+
 
 router = APIRouter()
 
@@ -39,6 +49,33 @@ def delete_todo(todo_id: int, db: Session = Depends(get_db)):
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return usercontroller.create_user(db, user)
 
-@router.post("/login", response_model=schemas.LgoinResponse)
+@router.post("/login", response_model=schemas.LoginResponse)
 def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
     return usercontroller.login_user_logic(user, db)
+
+
+@router.get("/users", response_model=list[schemas.UserResponse])
+def read_users(db: Session = Depends(get_db)):
+    return usercontroller.get_all_todos(db)
+
+
+@router.post("/password-reset/request")
+def request_reset(data: PasswordResetRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == data.email).first()
+    if user:
+        token = create_reset_token(user.email)
+        print(token,'token')
+        send_reset_email(user.email, token)
+    return {"msg": "If the email exists, a reset link has been sent."}
+
+@router.post("/password-reset/confirm")
+def confirm_reset(data: PasswordResetConfirm, db: Session = Depends(get_db)):
+    email = verify_reset_token(data.token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        user.hashed_password = bcrypt.hash(data.new_password)
+        db.commit()
+        return {"msg": "Password reset successful"}
+    raise HTTPException(status_code=404, detail="User not found")
