@@ -7,6 +7,8 @@ import time
 from utils.security import hash_password, verify_password
 from fastapi import Depends
 from database.database import get_db 
+from utils.jwt import create_access_token  # import token generator
+
 
 reset_tokens = {}
 
@@ -52,14 +54,20 @@ def login_user_logic(user: UserLogin, db: Session):
 
     db_user = db.query(User).filter(User.email == user.email).first()
 
-    if not db_user:
+    if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if not verify_password(user.password, db_user.password):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    # ✅ Create JWT token with minimal payload (only what's needed)
+    access_token = create_access_token(data={
+        "sub": db_user.email
+    })
 
-    return db_user
+    return {
+        "access_token": access_token
 
+    }
 
-def read_users(db: Session):
-    return db.query(User).all()
+def get_user(db: Session, todo_id: str):
+    print(todo_id,'eamail')
+    return db.query(User).filter(User.email == todo_id).first()
+

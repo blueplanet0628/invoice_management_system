@@ -2,8 +2,13 @@
 import React, { useReducer, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from "@/lib/redux/features/authSlice";
+
 
 const LoginForm: React.FC = () => {
+
+  const dispatch = useDispatch()
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
@@ -21,7 +26,7 @@ const LoginForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios.post(
-      'http://192.168.131.55:9000/login/',
+      'http://localhost:9000/login/',
       {
         email: formData.email,
         password: formData.password,
@@ -33,7 +38,10 @@ const LoginForm: React.FC = () => {
       }
     )
     .then((res) => {
-      console.log(res);
+      console.log(res.data);
+      const data = res.data;
+      
+      localStorage.setItem('token', data.access_token);
       router.push('/dashboard')
       
     })

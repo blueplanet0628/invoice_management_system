@@ -64,8 +64,7 @@ class UserLogin(BaseModel):
     password: str
 
 class LoginResponse(BaseModel):
-    id: int
-    email: str
+    access_token: str
     class Config:
         orm_mode = True
 

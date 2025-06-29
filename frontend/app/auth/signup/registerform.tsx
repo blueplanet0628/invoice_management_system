@@ -50,9 +50,11 @@ const RegistrationForm: React.FC = () => {
         alert("プライバシーポリシーへの同意が必要です。");
         return;
       } else {
-        const res = axios.post('http://localhost:9000/users', formData)
+        const res = axios.post('http://192.168.131.55:9000/users', formData)
         .then((res) => {
-          router.push('/auth/signup-success');
+          if(res) {
+            router.push('/auth/signup-success');
+          }
           console.log(res.data);
           setFormData({
             representative: "",

@@ -54,9 +54,9 @@ def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
     return usercontroller.login_user_logic(user, db)
 
 
-@router.get("/users", response_model=list[schemas.UserResponse])
+@router.get("/users/{user_id}", response_model=list[schemas.UserResponse])
 def read_users(db: Session = Depends(get_db)):
-    return usercontroller.get_all_todos(db)
+    return usercontroller.get_user(db)
 
 
 @router.post("/password-reset/request")

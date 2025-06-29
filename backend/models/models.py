@@ -22,7 +22,7 @@ class User(Base):
     phone = Column(String(20))
     password = Column(String(100))  # ハッシュ化されたパスワードを保存することを想定
     reset_token = Column(String(255), nullable=True)
-
+    role = Column(String(100), default = "user")
     created_at = Column(Integer)
     updated_at = Column(Integer)  
 
